@@ -13,6 +13,7 @@
     <nav>
       <a href="{{ url_for('auth.login') }}">Login</a> |
       <a href="{{ url_for('auth.register') }}">Register</a>
+      <a href="{{ url_for('patient.add_patient') }}">Add Patient</a>
     </nav>
     <div class="content">{% block content %}{% endblock %}</div>
   </body>

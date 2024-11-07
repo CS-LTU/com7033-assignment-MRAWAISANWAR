@@ -1,0 +1,20 @@
+{% extends "base.html" %} {% block content %}
+<h2>Add Patient</h2>
+<form method="POST">
+  {{ form.hidden_tag() }}
+  <div>{{ form.patient_id.label }} {{ form.patient_id() }}</div>
+  <div>{{ form.name.label }} {{ form.name() }}</div>
+  <div>{{ form.age.label }} {{ form.age() }}</div>
+  <div>{{ form.gender.label }} {{ form.gender() }}</div>
+  <div>{{ form.ever_married.label }} {{ form.ever_married() }}</div>
+  <div>{{ form.work_type.label }} {{ form.work_type() }}</div>
+  <div>{{ form.residence_type.label }} {{ form.residence_type() }}</div>
+  <div>{{ form.heart_disease.label }} {{ form.heart_disease() }}</div>
+  <div>{{ form.hypertension.label }} {{ form.hypertension() }}</div>
+  <div>{{ form.avg_glucose_level.label }} {{ form.avg_glucose_level() }}</div>
+  <div>{{ form.bmi.label }} {{ form.bmi() }}</div>
+  <div>{{ form.smoking_status.label }} {{ form.smoking_status() }}</div>
+  <div>{{ form.stroke_risk.label }} {{ form.stroke_risk() }}</div>
+  <div>{{ form.submit() }}</div>
+</form>
+{% endblock %}
