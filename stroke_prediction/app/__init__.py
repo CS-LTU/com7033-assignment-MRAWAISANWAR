@@ -4,11 +4,14 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
+from flask_login import LoginManager
 from mongoengine import connect
+
 # Initialize extensions
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 jwt = JWTManager()
+login_manager = LoginManager()  # Initialize LoginManager
 
 # Load environment variables from .env file
 load_dotenv()
@@ -18,7 +21,6 @@ def create_app():
 
     # Configurations
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLITE_DATABASE_URI')
     app.config["MONGO_URI"] = os.getenv("MONGO_URI")
 
@@ -26,15 +28,29 @@ def create_app():
     db.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
+    login_manager.init_app(app)
 
-    # Import and register blueprints here to avoid circular imports
+    # Set login view (Redirect user to login page if they are not authenticated)
+    login_manager.login_view = "auth.login"
+
+    # Import and register blueprints
     from app.views.auth import auth
     app.register_blueprint(auth, url_prefix='/auth')
 
-     # Connect to MongoDB
+    from app.views.profile import profile
+    app.register_blueprint(profile, url_prefix='/profile')
+
+    # Connect to MongoDB
     connect(host=app.config["MONGO_URI"])
 
-    # Sample route
+    # Define the user_loader function for Flask-Login
+    @login_manager.user_loader
+    def load_user(user_id):
+        # Assuming you have a `User` model for SQLAlchemy
+        from app.models.user import User  # Make sure to import your User model
+        return User.query.get(int(user_id))
+
+    # Route
     @app.route('/')
     def home():
         return render_template('home.html')

@@ -1,8 +1,6 @@
-# stroke_prediction/app/views/patient.py
-
 from flask import Blueprint, render_template, redirect, url_for, flash
 from app.forms.patient_form import PatientForm
-from app.models.patient import Patient  # Import the Patient model from your MongoDB schema
+from app.models.patient import Patient
 from datetime import datetime
 from flask_login import current_user  # Assuming you’re using Flask-Login
 

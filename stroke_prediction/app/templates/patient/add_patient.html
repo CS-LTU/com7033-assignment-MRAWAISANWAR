@@ -1,4 +1,5 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} {% block content %} {% if current_user.role in
+['admin', 'doctor'] %}
 <h2>Add Patient</h2>
 <form method="POST">
   {{ form.hidden_tag() }}
@@ -17,4 +18,6 @@
   <div>{{ form.stroke_risk.label }} {{ form.stroke_risk() }}</div>
   <div>{{ form.submit() }}</div>
 </form>
-{% endblock %}
+{% else %}
+<p>You do not have permission to add patients.</p>
+{% endif %} {% endblock %}

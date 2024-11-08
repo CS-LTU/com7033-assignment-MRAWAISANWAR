@@ -1,8 +1,9 @@
-<!-- app/templates/home.html -->
 {% extends "base.html" %} {% block content %}
 <h1>Welcome to StrokeWatch App</h1>
 <p>
+  {% if current_user.is_authenticated %} You are logged in as {{
+  current_user.username }} (Role: {{ current_user.role }}). {% else %}
   <a href="{{ url_for('auth.login') }}">Login</a> or
-  <a href="{{ url_for('auth.register') }}">Register</a> to continue.
+  <a href="{{ url_for('auth.register') }}">Register</a> to continue. {% endif %}
 </p>
 {% endblock %}
