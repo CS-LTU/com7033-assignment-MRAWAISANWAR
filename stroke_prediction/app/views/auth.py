@@ -9,7 +9,7 @@ auth = Blueprint('auth', __name__)
 def register():
     if request.method == 'POST':
         data = request.form
-        username = data.get('username')
+        name = data.get('name')
         email = data.get('email')
         password = data.get('password')
         role = data.get('role')
@@ -21,7 +21,7 @@ def register():
 
         # Create new user and hash the password
         new_user = User(
-            username=username,
+            name=name,
             email=email,
             role=role
         )

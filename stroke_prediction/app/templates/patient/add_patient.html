@@ -1,23 +1,160 @@
-{% extends "base.html" %} {% block content %} {% if current_user.role in
-['admin', 'doctor'] %}
-<h2>Add Patient</h2>
-<form method="POST">
-  {{ form.hidden_tag() }}
-  <div>{{ form.patient_id.label }} {{ form.patient_id() }}</div>
-  <div>{{ form.name.label }} {{ form.name() }}</div>
-  <div>{{ form.age.label }} {{ form.age() }}</div>
-  <div>{{ form.gender.label }} {{ form.gender() }}</div>
-  <div>{{ form.ever_married.label }} {{ form.ever_married() }}</div>
-  <div>{{ form.work_type.label }} {{ form.work_type() }}</div>
-  <div>{{ form.residence_type.label }} {{ form.residence_type() }}</div>
-  <div>{{ form.heart_disease.label }} {{ form.heart_disease() }}</div>
-  <div>{{ form.hypertension.label }} {{ form.hypertension() }}</div>
-  <div>{{ form.avg_glucose_level.label }} {{ form.avg_glucose_level() }}</div>
-  <div>{{ form.bmi.label }} {{ form.bmi() }}</div>
-  <div>{{ form.smoking_status.label }} {{ form.smoking_status() }}</div>
-  <div>{{ form.stroke_risk.label }} {{ form.stroke_risk() }}</div>
-  <div>{{ form.submit() }}</div>
-</form>
-{% else %}
-<p>You do not have permission to add patients.</p>
-{% endif %} {% endblock %}
+<!-- patient/add_patient.html -->
+{% extends "base.html" %} {% block content %}
+<div class="patient-form-container fade-in">
+  <div class="form-header">
+    <h1>
+      <span class="material-icons">person_add</span>
+      Add New Patient
+    </h1>
+  </div>
+
+  <div class="form-card">
+    {% if current_user.role in ['admin', 'doctor'] %}
+    <form method="POST" class="patient-form">
+      {{ form.hidden_tag() }}
+
+      <div class="form-grid">
+        <!-- Personal Information -->
+        <div class="form-section">
+          <h3>Personal Information</h3>
+          <div class="form-group">
+            {{ form.patient_id.label }}
+            <div class="input-icon">
+              <span class="material-icons">badge</span>
+              {{ form.patient_id(class="form-control") }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            {{ form.name.label }}
+            <div class="input-icon">
+              <span class="material-icons">person</span>
+              {{ form.name(class="form-control") }}
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              {{ form.age.label }}
+              <div class="input-icon">
+                <span class="material-icons">cake</span>
+                {{ form.age(class="form-control") }}
+              </div>
+            </div>
+            <div class="form-group">
+              {{ form.gender.label }}
+              <div class="input-icon">
+                <span class="material-icons">people</span>
+                {{ form.gender(class="form-control") }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Information -->
+        <div class="form-section">
+          <h3>Social Information</h3>
+          <div class="form-row">
+            <div class="form-group">
+              {{ form.ever_married.label }}
+              <div class="input-icon">
+                <span class="material-icons">favorite</span>
+                {{ form.ever_married(class="form-control") }}
+              </div>
+            </div>
+            <div class="form-group">
+              {{ form.work_type.label }}
+              <div class="input-icon">
+                <span class="material-icons">work</span>
+                {{ form.work_type(class="form-control") }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            {{ form.residence_type.label }}
+            <div class="input-icon">
+              <span class="material-icons">home</span>
+              {{ form.residence_type(class="form-control") }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Medical Information -->
+        <div class="form-section">
+          <h3>Medical Information</h3>
+          <div class="form-row">
+            <div class="form-group">
+              {{ form.heart_disease.label }}
+              <div class="input-icon">
+                <span class="material-icons">favorite_border</span>
+                {{ form.heart_disease(class="form-control") }}
+              </div>
+            </div>
+            <div class="form-group">
+              {{ form.hypertension.label }}
+              <div class="input-icon">
+                <span class="material-icons">medicine</span>
+                {{ form.hypertension(class="form-control") }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              {{ form.avg_glucose_level.label }}
+              <div class="input-icon">
+                <span class="material-icons">analytics</span>
+                {{ form.avg_glucose_level(class="form-control") }}
+              </div>
+            </div>
+            <div class="form-group">
+              {{ form.bmi.label }}
+              <div class="input-icon">
+                <span class="material-icons">monitor_weight</span>
+                {{ form.bmi(class="form-control") }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              {{ form.smoking_status.label }}
+              <div class="input-icon">
+                <span class="material-icons">smoke_free</span>
+                {{ form.smoking_status(class="form-control") }}
+              </div>
+            </div>
+            <div class="form-group">
+              {{ form.stroke_risk.label }}
+              <div class="input-icon">
+                <span class="material-icons">warning</span>
+                {{ form.stroke_risk(class="form-control") }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <a href="{{ url_for('home') }}" class="btn btn-secondary">
+          <span class="material-icons">arrow_back</span>
+          Cancel
+        </a>
+        {{ form.submit(class="btn btn-primary") }}
+      </div>
+    </form>
+    {% else %}
+    <div class="access-denied">
+      <span class="material-icons">lock</span>
+      <h2>Access Denied</h2>
+      <p>You do not have permission to add patients.</p>
+      <a href="{{ url_for('home') }}" class="btn btn-primary">
+        <span class="material-icons">home</span>
+        Return to Home
+      </a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

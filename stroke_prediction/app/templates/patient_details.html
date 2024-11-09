@@ -1,0 +1,128 @@
+<!-- patient_details.html -->
+{% extends "home.html" %} {% block search_result %}
+<div class="patient-details fade-in">
+  <div class="details-header">
+    <div class="patient-icon">
+      <span class="material-icons">personal_injury</span>
+    </div>
+    <div class="header-content">
+      <h2>{{ patient.name }}</h2>
+      <span class="patient-id">ID: {{ patient.patient_id }}</span>
+    </div>
+  </div>
+
+  <div class="details-grid">
+    <!-- Personal Information -->
+    <div class="details-section">
+      <h3>
+        <span class="material-icons">person</span>
+        Personal Information
+      </h3>
+      <div class="details-content">
+        <div class="detail-item">
+          <label>Age</label>
+          <span>{{ patient.age }} years</span>
+        </div>
+        <div class="detail-item">
+          <label>Gender</label>
+          <span>{{ patient.gender }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Marital Status</label>
+          <span>{{ patient.ever_married }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Social Information -->
+    <div class="details-section">
+      <h3>
+        <span class="material-icons">people</span>
+        Social Information
+      </h3>
+      <div class="details-content">
+        <div class="detail-item">
+          <label>Work Type</label>
+          <span>{{ patient.work_type }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Residence</label>
+          <span>{{ patient.residence_type }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Health Indicators -->
+    <div class="details-section">
+      <h3>
+        <span class="material-icons">medication</span>
+        Health Indicators
+      </h3>
+      <div class="details-content">
+        <div class="detail-item">
+          <label>Heart Disease</label>
+          <span
+            class="health-status {% if patient.heart_disease == 'Yes' %}status-warning{% endif %}"
+          >
+            {{ patient.heart_disease }}
+          </span>
+        </div>
+        <div class="detail-item">
+          <label>Hypertension</label>
+          <span
+            class="health-status {% if patient.hypertension == 'Yes' %}status-warning{% endif %}"
+          >
+            {{ patient.hypertension }}
+          </span>
+        </div>
+        <div class="detail-item">
+          <label>Avg. Glucose Level</label>
+          <span>{{ "%.1f"|format(patient.avg_glucose_level) }}</span>
+        </div>
+        <div class="detail-item">
+          <label>BMI</label>
+          <span>{{ "%.1f"|format(patient.bmi) }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Smoking Status</label>
+          <span>{{ patient.smoking_status }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Risk Assessment -->
+    <div class="details-section risk-section">
+      <h3>
+        <span class="material-icons">assessment</span>
+        Risk Assessment
+      </h3>
+      <div class="details-content">
+        <div class="risk-indicator">
+          <div class="risk-label">Stroke Risk</div>
+          <div
+            class="risk-value {% if patient.stroke_risk > 70 %}high-risk{% elif patient.stroke_risk > 30 %}medium-risk{% else %}low-risk{% endif %}"
+          >
+            {{ patient.stroke_risk }}%
+          </div>
+          <div class="risk-bar">
+            <div
+              class="risk-fill"
+              style="width: {{ patient.stroke_risk }}%"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="details-footer">
+    <div class="metadata">
+      <span>Created by: {{ patient.created_by }}</span>
+      <span
+        >Entry Date: {{ patient.record_entry_date.strftime('%Y-%m-%d %H:%M')
+        }}</span
+      >
+    </div>
+  </div>
+</div>
+{% endblock %}

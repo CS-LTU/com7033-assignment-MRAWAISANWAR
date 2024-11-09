@@ -1,4 +1,116 @@
+<!-- profile/settings.html -->
 {% extends "base.html" %} {% block content %}
-<h2>User Settings</h2>
-<p>Welcome to your settings page.</p>
+<div class="settings-container fade-in">
+  <div class="settings-header">
+    <div class="user-avatar">
+      <span class="material-icons">account_circle</span>
+    </div>
+    <h1>Account Settings</h1>
+  </div>
+
+  <div class="settings-card">
+    <div class="settings-info">
+      <div class="info-group">
+        <label>Name</label>
+        <p>{{ current_user.name }}</p>
+      </div>
+      <div class="info-group">
+        <label>Email</label>
+        <p>{{ current_user.email }}</p>
+      </div>
+      <div class="info-group">
+        <label>Role</label>
+        <p class="user-role">{{ current_user.role.title() }}</p>
+      </div>
+    </div>
+
+    <div class="settings-actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        onclick="handleFormToggle('nameForm')"
+      >
+        <span class="material-icons">edit</span>
+        Change Name
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        onclick="handleFormToggle('passwordForm')"
+      >
+        <span class="material-icons">lock</span>
+        Change Password
+      </button>
+    </div>
+
+    <!-- Change Name Form -->
+    <form
+      id="nameForm"
+      class="settings-form hidden"
+      method="POST"
+      action="{{ url_for('profile.update_name') }}"
+    >
+      <div class="form-group">
+        <label for="new_name">New Name</label>
+        <div class="input-icon">
+          <span class="material-icons">person</span>
+          <input type="text" id="new_name" name="new_name" required />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          onclick="handleFormToggle('nameForm')"
+        >
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary">Update Name</button>
+      </div>
+    </form>
+
+    <!-- Change Password Form -->
+    <form
+      id="passwordForm"
+      class="settings-form hidden"
+      method="POST"
+      action="{{ url_for('profile.update_password') }}"
+    >
+      <div class="form-group">
+        <label for="current_password">Current Password</label>
+        <div class="input-icon">
+          <span class="material-icons">lock</span>
+          <input
+            type="password"
+            id="current_password"
+            name="current_password"
+            required
+          />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="new_password">New Password</label>
+        <div class="input-icon">
+          <span class="material-icons">lock_reset</span>
+          <input
+            type="password"
+            id="new_password"
+            name="new_password"
+            required
+          />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          onclick="handleFormToggle('passwordForm')"
+        >
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary">Update Password</button>
+      </div>
+    </form>
+  </div>
+</div>
 {% endblock %}

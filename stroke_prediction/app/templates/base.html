@@ -4,13 +4,63 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>StrokeWatch</title>
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Material Icons -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+
+    <!-- Toastify for notifications -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
+
+    <!-- Custom CSS -->
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/styles.css') }}"
     />
+
+    <!-- JavaScript Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js" defer></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
   </head>
   <body>
-    {% include 'partials/navbar.html' %}
-    <div class="content">{% block content %}{% endblock %}</div>
+    {% if current_user.is_authenticated %} {% include 'partials/navbar.html' %}
+    {% endif %}
+
+    <!-- Flash Messages -->
+    <div
+      id="flash-messages"
+      style="display: none"
+      data-messages="{{ get_flashed_messages(with_categories=true) | tojson }}"
+    ></div>
+
+    <main
+      class="main-content {% if not current_user.is_authenticated %}centered-content{% endif %}"
+    >
+      {% block content %}{% endblock %}
+    </main>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const flashContainer = document.getElementById("flash-messages");
+        const messages = JSON.parse(flashContainer.dataset.messages);
+
+        messages.forEach(function (item) {
+          const [category, message] = item;
+          showToast(message, category);
+        });
+      });
+    </script>
   </body>
 </html>
