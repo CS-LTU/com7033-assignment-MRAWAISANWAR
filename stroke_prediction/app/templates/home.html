@@ -14,7 +14,6 @@ current_user.is_authenticated %}
     class="search-form"
   >
     <div class="search-input-container">
-      <span class="material-icons">search</span>
       <input
         type="text"
         id="patient_id"
@@ -22,10 +21,21 @@ current_user.is_authenticated %}
         placeholder="Enter Patient ID"
         required
       />
+      <button
+        type="submit"
+        style="
+          margin-right: 0px;
+          border-radius: 50px;
+          background-color: transparent;
+        "
+        class="btn btn-primary"
+      >
+        <span style="margin-right: 0px" class="material-icons">search</span>
+      </button>
       {% if current_user.role in ['admin', 'doctor'] %}
       <div class="search-divider"></div>
       <a href="{{ url_for('patient.add_patient') }}" class="btn btn-primary">
-        <span class="material-icons">add</span>
+        <span style="margin-right: 0px" class="material-icons">add</span>
         Add Patient
       </a>
       {% endif %}

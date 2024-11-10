@@ -11,6 +11,8 @@
     <p class="auth-subtitle">Please sign in to continue</p>
 
     <form class="auth-form" action="{{ url_for('auth.login') }}" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
       <div class="form-group">
         <label for="email">Email</label>
         <div class="input-icon">

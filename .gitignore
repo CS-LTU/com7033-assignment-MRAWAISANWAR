@@ -196,3 +196,5 @@ Thumbs.db
 
 # GitHub Actions cache
 .cache/
+
+ModelTrainingFiles/

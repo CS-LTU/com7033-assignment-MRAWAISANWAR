@@ -774,4 +774,5 @@ brand-link {
   right: var(--spacing-lg) !important;
   border-radius: var(--radius-md) !important;
   padding: var(--spacing-md) var(--spacing-lg) !important;
+  background: var(--primary) !important;
 }

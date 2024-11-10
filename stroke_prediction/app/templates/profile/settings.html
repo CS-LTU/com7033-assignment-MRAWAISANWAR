@@ -50,6 +50,8 @@
       method="POST"
       action="{{ url_for('profile.update_name') }}"
     >
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
       <div class="form-group">
         <label for="new_name">New Name</label>
         <div class="input-icon">
@@ -76,6 +78,8 @@
       method="POST"
       action="{{ url_for('profile.update_password') }}"
     >
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
       <div class="form-group">
         <label for="current_password">Current Password</label>
         <div class="input-icon">
