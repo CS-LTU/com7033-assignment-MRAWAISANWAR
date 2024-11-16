@@ -12,7 +12,7 @@
     {% if current_user.role in ['admin', 'doctor'] %}
     <form method="POST" class="patient-form">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-
+      {{ form.hidden_tag() }}
       <div class="form-grid">
         <!-- Personal Information -->
         <div class="form-section">
@@ -63,19 +63,18 @@
               </div>
             </div>
             <div class="form-group">
-              {{ form.work_type.label }}
+              {{ form.residence_type.label }}
               <div class="input-icon">
-                <span class="material-icons">work</span>
-                {{ form.work_type(class="form-control") }}
+                <span class="material-icons">home</span>
+                {{ form.residence_type(class="form-control") }}
               </div>
             </div>
           </div>
-
           <div class="form-group">
-            {{ form.residence_type.label }}
+            {{ form.work_type.label }}
             <div class="input-icon">
-              <span class="material-icons">home</span>
-              {{ form.residence_type(class="form-control") }}
+              <span class="material-icons">work</span>
+              {{ form.work_type(class="form-control") }}
             </div>
           </div>
         </div>
@@ -116,13 +115,12 @@
             </div>
           </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              {{ form.smoking_status.label }}
-              <div class="input-icon">
-                <span class="material-icons">smoke_free</span>
-                {{ form.smoking_status(class="form-control") }}
-              </div>
+          
+          <div class="form-group">
+            {{ form.smoking_status.label }}
+            <div class="input-icon">
+              <span class="material-icons">smoke_free</span>
+              {{ form.smoking_status(class="form-control") }}
             </div>
           </div>
         </div>
@@ -147,166 +145,218 @@
     <!-- Add the modal -->
     <div id="predictionModal" class="modal hidden">
       <div class="modal-content">
-        <div class="modal-header">
-          <h2>
-            <span class="material-icons">assessment</span>
-            Risk Assessment Results
-          </h2>
-        </div>
-        <div class="modal-body">
-          <div class="risk-indicator">
-            <div class="risk-label">Predicted Stroke Risk</div>
-            <div id="riskValue" class="risk-value">
-              <!-- Will be filled by JavaScript -->
-            </div>
-            <div class="risk-bar">
-              <div id="riskFill" class="risk-fill"></div>
+        <button type="button" class="model-hide" onclick="hideModal()">
+          <span class="material-icons">close</span>
+        </button>
+        
+          <div class="modal-header">
+            <h2>
+              <span class="material-icons">assessment</span>
+              Risk Assessment Results
+            </h2>
+            <div class="patient-id">
+              <span class="material-icons">badge</span>
+              <span id="modalPatientId"></span>
             </div>
           </div>
-          <p class="risk-message" id="riskMessage"></p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" onclick="closeModal()">
-            <span class="material-icons">check</span>
-            Close
-          </button>
+
+          <div class="modal-body">
+            <div class="risk-indicator">
+              <div class="risk-label">Predicted Stroke Risk</div>
+              <div id="riskValue" class="risk-value">
+                <!-- Will be filled by JavaScript -->
+              </div>
+              <div class="risk-bar">
+                <div id="riskFill" class="risk-fill"></div>
+              </div>
+            </div>
+            <p class="risk-message" id="riskMessage"></p>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="GotoHome()"
+            >
+              <span class="material-icons">arrow_back</span>
+              Home
+            </button>
+          </div>
         </div>
       </div>
+      {% else %}
+      <div class="access-denied">
+        <span class="material-icons">lock</span>
+        <h2>Access Denied</h2>
+        <p>You do not have permission to add patients.</p>
+        <a href="{{ url_for('home') }}" class="btn btn-primary">
+          <span class="material-icons">home</span>
+          Return to Home
+        </a>
+      </div>
+      {% endif %}
     </div>
-    {% else %}
-    <div class="access-denied">
-      <span class="material-icons">lock</span>
-      <h2>Access Denied</h2>
-      <p>You do not have permission to add patients.</p>
-      <a href="{{ url_for('home') }}" class="btn btn-primary">
-        <span class="material-icons">home</span>
-        Return to Home
-      </a>
-    </div>
-    {% endif %}
   </div>
-</div>
 
-<style>
-  .modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-  }
-
-  .modal.show {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.3s ease-out;
-  }
-
-  .modal-content {
-    background: var(--surface);
-    border-radius: var(--radius-lg);
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  }
-
-  .modal-header {
-    padding: var(--spacing-lg);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .modal-header h2 {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    margin: 0;
-    font-size: 1.5rem;
-  }
-
-  .modal-body {
-    padding: var(--spacing-xl);
-  }
-
-  .modal-footer {
-    padding: var(--spacing-lg);
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
+  <style>
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
     }
-    to {
-      opacity: 1;
+
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease-out;
     }
-  }
-</style>
 
-<script>
-  async function handlePrediction(event) {
-    event.preventDefault();
-    const form = document.querySelector(".patient-form");
-    const formData = new FormData(form);
+    .modal-content {
+      position: relative;
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
 
-    try {
-      const response = await fetch("{{ url_for('patient.predict_risk') }}", {
-        method: "POST",
-        headers: {
-          "X-CSRF-Token": document.querySelector('input[name="csrf_token"]')
-            .value,
-        },
-        body: formData,
-        credentials: "same-origin",
-      });
+    .modal-header {
+      position: relative;
+      padding: var(--spacing-lg);
+      border-bottom: 1px solid var(--border);
+    }
 
-      const data = await response.json();
+    .model-hide {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+      z-index: 10;
+    }
 
-      if (response.ok) {
-        // Update modal with prediction
-        const riskValue = document.getElementById("riskValue");
-        const riskFill = document.getElementById("riskFill");
-        const riskMessage = document.getElementById("riskMessage");
+    .model-hide:hover {
+      color: firebrick;
+    }
 
-        riskValue.textContent = `${data.risk}%`;
-        riskFill.style.width = `${data.risk}%`;
+    .patient-id {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
 
-        // Add risk class
-        riskValue.className = "risk-value";
-        if (data.risk > 70) {
-          riskValue.classList.add("high-risk");
-          riskMessage.textContent =
-            "High risk of stroke detected. Immediate medical consultation recommended.";
-        } else if (data.risk > 30) {
-          riskValue.classList.add("medium-risk");
-          riskMessage.textContent =
-            "Moderate risk of stroke detected. Regular medical check-ups recommended.";
-        } else {
-          riskValue.classList.add("low-risk");
-          riskMessage.textContent =
-            "Low risk of stroke detected. Maintain healthy lifestyle habits.";
-        }
+    .modal-header h2 {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      margin: 0;
+      font-size: 1.5rem;
+    }
 
-        // Show modal
-        document.getElementById("predictionModal").classList.add("show");
-      } else {
-        showToast(data.message || "Error predicting risk", "danger");
+    .modal-body {
+      padding: var(--spacing-xl);
+    }
+
+    .modal-footer {
+      padding: var(--spacing-lg);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
       }
-    } catch (error) {
-      console.error("Error:", error);
-      showToast("Error processing request", "danger");
+      to {
+        opacity: 1;
+      }
     }
-  }
+  </style>
 
-  function closeModal() {
-    document.getElementById("predictionModal").classList.remove("show");
-    // Redirect to home after successful prediction and save
-    window.location.href = "{{ url_for('home') }}";
-  }
-</script>
-{% endblock %}
+  <script>
+    async function handlePrediction(event) {
+      event.preventDefault();
+      const form = document.querySelector(".patient-form");
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch("{{ url_for('patient.predict_risk') }}", {
+          method: "POST",
+          headers: {
+            "X-CSRF-Token": document.querySelector('input[name="csrf_token"]')
+              .value,
+          },
+          body: formData,
+          credentials: "same-origin",
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Update modal with prediction
+          // const patientID = document.getElementById("patientID");
+          const riskValue = document.getElementById("riskValue");
+          const riskFill = document.getElementById("riskFill");
+          const riskMessage = document.getElementById("riskMessage");
+
+          // patientID.textContent = `${data.patient_id}`;
+          riskValue.textContent = `${data.risk.toFixed(2)}%`;
+          riskFill.style.width = `${data.risk}%`;
+
+          // Add risk class
+          riskValue.className = "risk-value";
+          if (data.risk > 70) {
+            riskValue.classList.add("high-risk");
+            riskMessage.textContent =
+              "High risk of stroke detected. Immediate medical consultation recommended.";
+          } else if (data.risk > 30) {
+            riskValue.classList.add("medium-risk");
+            riskMessage.textContent =
+              "Moderate risk of stroke detected. Regular medical check-ups recommended.";
+          } else {
+            riskValue.classList.add("low-risk");
+            riskMessage.textContent =
+              "Low risk of stroke detected. Maintain healthy lifestyle habits.";
+          }
+
+          // Show modal
+          document.getElementById("predictionModal").classList.add("show");
+        } else {
+          showToast(data.message || "Error predicting risk", "danger");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        showToast("Error processing request", "danger");
+      }
+    }
+
+    function GotoHome() {
+      document.getElementById("predictionModal").classList.remove("show");
+      // Redirect to home after successful prediction and save
+      window.location.href = "{{ url_for('home') }}";
+    }
+
+    function hideModal() {
+      document.getElementById("predictionModal").classList.remove("show");
+    }
+  </script>
+  {% endblock %}
+</div>

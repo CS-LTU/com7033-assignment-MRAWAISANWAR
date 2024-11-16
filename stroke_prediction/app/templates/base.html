@@ -31,9 +31,15 @@
       href="{{ url_for('static', filename='css/styles.css') }}"
     />
 
+    <!-- Additional CSS block for child templates -->
+    {% block extra_css %}{% endblock %}
+
     <!-- JavaScript Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js" defer></script>
     <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+
+    <!-- Additional JavaScript block for child templates -->
+    {% block extra_head_js %}{% endblock %}
   </head>
   <body>
     {% if current_user.is_authenticated %} {% include 'partials/navbar.html' %}
@@ -48,21 +54,19 @@
 
     <main
       class="main-content {% if not current_user.is_authenticated %}centered-content{% endif %}"
+      {%
+      if
+      current_user.is_authenticated
+      %}
+      data-has-patient="{{ 'true' if request.args.get('patient_id') else 'false' }}"
+      {%
+      endif
+      %}
     >
       {% block content %}{% endblock %}
     </main>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const flashContainer = document.getElementById("flash-messages");
-        console.log(flashContainer.dataset.messages);
-        const messages = JSON.parse(flashContainer.dataset.messages);
-
-        messages.forEach(function (item) {
-          const [category, message] = item;
-          showToast(message, category);
-        });
-      });
-    </script>
+    <!-- Additional JavaScript block at the end of body -->
+    {% block extra_js %}{% endblock %}
   </body>
 </html>

@@ -1,7 +1,10 @@
-<!-- home.html -->
-{% extends "base.html" %} {% block content %} {% if
-current_user.is_authenticated %}
-<div class="search-container fade-in">
+{% extends "base.html" %} {% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/home.css') }}"
+/>
+{% endblock %} {% block content %} {% if current_user.is_authenticated %}
+<div class="search-container fade-in" id="main-search">
   <div class="search-logo">
     <span class="material-icons">health_and_safety</span>
     <h1>StrokeWatch</h1>
@@ -10,32 +13,24 @@ current_user.is_authenticated %}
   <form
     action="{{ url_for('patient.search_patient') }}"
     method="get"
-    id="search-form"
+    id="main-search-form"
     class="search-form"
   >
     <div class="search-input-container">
       <input
         type="text"
-        id="patient_id"
+        id="main-patient-id"
         name="patient_id"
         placeholder="Enter Patient ID"
         required
       />
-      <button
-        type="submit"
-        style="
-          margin-right: 0px;
-          border-radius: 50px;
-          background-color: transparent;
-        "
-        class="btn btn-primary"
-      >
-        <span style="margin-right: 0px" class="material-icons">search</span>
+      <button type="submit" class="btn btn-primary search-button">
+        <span class="material-icons">search</span>
       </button>
       {% if current_user.role in ['admin', 'doctor'] %}
       <div class="search-divider"></div>
       <a href="{{ url_for('patient.add_patient') }}" class="btn btn-primary">
-        <span style="margin-right: 0px" class="material-icons">add</span>
+        <span class="material-icons">add</span>
         Add Patient
       </a>
       {% endif %}
@@ -61,4 +56,6 @@ current_user.is_authenticated %}
 <div id="patient-details" class="patient-details-container">
   {% block search_result %}{% endblock %}
 </div>
+{% endblock %} {% block extra_js %}
+<script src="{{ url_for('static', filename='js/home.js') }}" defer></script>
 {% endblock %}

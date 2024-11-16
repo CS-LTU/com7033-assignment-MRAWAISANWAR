@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired, NumberRange, Length
 class PatientForm(FlaskForm):
     patient_id = StringField('Patient ID', validators=[
         DataRequired(),
-        Length(min=3, max=50)
+        Length(min=6, max=6)
     ])
     
     name = StringField('Patient Name', validators=[
@@ -16,7 +16,7 @@ class PatientForm(FlaskForm):
     
     age = IntegerField('Age', validators=[
         DataRequired(),
-        NumberRange(min=0, max=120)
+        NumberRange(min=5, max=120)
     ])
     
     gender = SelectField('Gender', choices=[
@@ -53,7 +53,7 @@ class PatientForm(FlaskForm):
         ('0', 'No')
     ], validators=[DataRequired()])
     
-    avg_glucose_level = FloatField('Average Glucose Level', validators=[
+    avg_glucose_level = FloatField('Avg. Glucose Level', validators=[
         DataRequired(),
         NumberRange(min=0)
     ])

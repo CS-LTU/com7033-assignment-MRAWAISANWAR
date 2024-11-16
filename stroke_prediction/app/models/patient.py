@@ -4,9 +4,9 @@ from datetime import datetime
 
 class Patient(Document):
     # Identification and Demographic Information
-    patient_id = StringField(required=True, unique=True)
+    patient_id = StringField(required=True, unique=True, min_value=6, max_value=6)
     name = StringField(required=True)
-    age = IntField(required=True, min_value=0)
+    age = IntField(required=True, min_value=5)
     gender = StringField(required=True, choices=["Male", "Female", "Other"])
     
     # Medical and Lifestyle Information
@@ -20,7 +20,7 @@ class Patient(Document):
     avg_glucose_level = FloatField(required=True, min_value=0)
     bmi = FloatField(required=True, min_value=0)
     smoking_status = StringField(required=True, choices=["Smokes", "Formerly Smoked", "Never Smoked", "Unknown"])
-    stroke_risk = IntField(required=True, min_value=0, max_value=100)
+    stroke_risk = FloatField(required=True, min_value=0, max_value=100)
     
     # Metadata
     record_entry_date = DateTimeField(default=datetime.now, required=True)

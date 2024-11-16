@@ -11,7 +11,36 @@
     </a>
   </div>
 
-  <div class="navbar-search" id="nav-search"></div>
+  <div class="navbar-search" id="nav-search">
+    <!-- Add the search form here -->
+    <form
+      action="{{ url_for('patient.search_patient') }}"
+      method="get"
+      class="search-form"
+      id="nav-search-form"
+    >
+      <div class="search-input-container">
+        <input
+          type="text"
+          id="nav-patient-id"
+          name="patient_id"
+          style="font-size: 1rem"
+          placeholder="Enter Patient Refrence Number"
+          required
+        />
+        <button type="submit" class="search-button btn btn-primary">
+          <span class="material-icons">search</span>
+        </button>
+        {% if current_user.role in ['admin', 'doctor'] %}
+        <div class="search-divider"></div>
+        <a href="{{ url_for('patient.add_patient') }}" class="btn btn-primary">
+          <span class="material-icons">add</span>
+          Add Patient
+        </a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
 
   <div class="navbar-actions">
     <div class="dropdown">

@@ -1,5 +1,5 @@
 #MongoDB_Schema.py
-from stroke_prediction.app.models.patient import Patient
+from app.models.patient import Patient
 from mongoengine import connect
 import os
 from dotenv import load_dotenv
