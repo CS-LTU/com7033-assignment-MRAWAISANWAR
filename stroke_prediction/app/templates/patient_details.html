@@ -1,4 +1,5 @@
 <!-- patient_details.html -->
+<!-- @ts-ignore -->
 {% extends "home.html" %} {% block search_result %}
 <div class="patient-details fade-in">
   <div class="details-header">
@@ -102,7 +103,7 @@
           <div
             class="risk-value {% if patient.stroke_risk > 70 %}high-risk{% elif patient.stroke_risk > 30 %}medium-risk{% else %}low-risk{% endif %}"
           >
-            {{ patient.stroke_risk }}%
+            {{ patient.stroke_risk | round(2)}}%
           </div>
           <div class="risk-bar">
             <div

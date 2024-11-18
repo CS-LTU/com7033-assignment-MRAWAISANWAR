@@ -4,9 +4,9 @@ from datetime import datetime
 
 class Patient(Document):
     # Identification and Demographic Information
-    patient_id = StringField(required=True, unique=True, min_value=6, max_value=6)
+    patient_id = StringField(required=True, unique=True, min_value=9, max_value=9)
     name = StringField(required=True)
-    age = IntField(required=True, min_value=5)
+    age = IntField(required=True, min_value=5, max_value=120)
     gender = StringField(required=True, choices=["Male", "Female", "Other"])
     
     # Medical and Lifestyle Information

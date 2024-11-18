@@ -22,6 +22,7 @@ load_dotenv()
 
 def create_app():
     app = Flask(__name__)
+    
 
     # Configurations
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
@@ -52,8 +53,10 @@ def create_app():
     from app.views.profile import profile
     app.register_blueprint(profile, url_prefix='/profile')
 
-    from app.views.patient import patient_bp
+    from app.views.process_patient import patient_bp
     app.register_blueprint(patient_bp, url_prefix='/patient')
+
+    
 
     # Connect to MongoDB
     connect(host=app.config["MONGO_URI"])

@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from app.forms.patient_form import PatientForm
 from app.models.patient import Patient
 from app.utils.prediction import StrokePredictor
+from app.utils.id_generator import IDGenerator
 from datetime import datetime
 from flask_login import current_user, login_required
 import traceback
@@ -99,7 +100,7 @@ def predict_risk():
         # Prepare data for MongoDB
         try:
             new_patient = Patient(
-                patient_id=request.form['patient_id'],
+                patient_id=IDGenerator.generate_patient_id(),
                 name=request.form['name'],
                 age=int(request.form['age']),
                 gender=request.form['gender'],

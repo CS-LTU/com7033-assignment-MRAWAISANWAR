@@ -248,6 +248,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         } catch (e) {
             console.error('Error parsing flash messages:', e);
+            console.log(flashContainer.dataset.messages);
         }
     }
 });
