@@ -1,3 +1,4 @@
+#views/process_patient.py
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from app.forms.patient_form import PatientForm
 from app.models.patient import Patient
@@ -122,6 +123,8 @@ def predict_risk():
             # Use the custom JSON encoder for the response
             response = {
                 'success': True,
+                'patient_id': new_patient.patient_id,
+                'name': new_patient.name,
                 'risk': risk_percentage,
                 'risk_level': risk_level,
                 'message': 'Patient data saved successfully'
@@ -149,6 +152,9 @@ def predict_risk():
 @login_required
 def search_patient():
     patient_id = request.args.get('patient_id')
+
+    print(f"Searching for patient: {patient_id}")  # Debug print
+
     
     if patient_id:
         patient = Patient.objects(patient_id=patient_id).first()
@@ -157,6 +163,7 @@ def search_patient():
             return render_template('patient_details.html', patient=patient)
         else:
             flash('Patient not found', 'warning')
-            return redirect(url_for('home'))
+            return jsonify({'success': False, 'message': 'Patient not found'}), 404
+            # return redirect(url_for('home'))
             
     return redirect(url_for('home'))

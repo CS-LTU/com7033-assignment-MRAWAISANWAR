@@ -14,10 +14,10 @@
   <div class="navbar-search" id="nav-search">
     <!-- Add the search form here -->
     <form
-      action="{{ url_for('patient.search_patient') }}"
       method="get"
-      class="search-form"
       id="nav-search-form"
+      class="search-form"
+      action="{{ url_for('patient.search_patient') }}"
     >
       <div class="search-input-container">
         <input

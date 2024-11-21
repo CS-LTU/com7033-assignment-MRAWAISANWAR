@@ -108,7 +108,6 @@
             </div>
           </div>
 
-          
           <div class="form-group">
             {{ form.smoking_status.label }}
             <div class="input-icon">
@@ -141,24 +140,23 @@
         <button type="button" class="model-hide" onclick="hideModal()">
           <span class="material-icons">close</span>
         </button>
-        
-          <div class="modal-header">
-            <h2>
-              <span class="material-icons">assessment</span>
-              Risk Assessment Results
-            </h2>
-            <div class="patient-id">
-              <span class="material-icons">badge</span>
-              <span id="modalPatientId"></span>
-            </div>
+
+        <div class="modal-header">
+
+          <div class="patient-icon">
+            <span class="material-icons">personal_injury</span>
           </div>
+          <div class="header-content">
+            <h2 id="patient-name" class="patient-name"><!-- Will be filled by JavaScript --></h2>
+            <span id="patient-id" class="patient-id"><!-- Will be filled by JavaScript --></span>
+          </div>
+          
+        </div>
 
           <div class="modal-body">
             <div class="risk-indicator">
               <div class="risk-label">Predicted Stroke Risk</div>
-              <div id="riskValue" class="risk-value">
-                <!-- Will be filled by JavaScript -->
-              </div>
+              <div id="riskValue" class="risk-value"><!-- Will be filled by JavaScript --></div>
               <div class="risk-bar">
                 <div id="riskFill" class="risk-fill"></div>
               </div>
@@ -167,11 +165,7 @@
           </div>
 
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-primary"
-              onclick="GotoHome()"
-            >
+            <button type="button" class="btn btn-primary" onclick="GotoHome()">
               <span class="material-icons">arrow_back</span>
               Home
             </button>
@@ -221,9 +215,50 @@
     }
 
     .modal-header {
-      position: relative;
-      padding: var(--spacing-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-lg);
+      padding: var(--spacing-xl);
       border-bottom: 1px solid var(--border);
+    }
+
+    .modal-header h2 {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .patient-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .patient-icon .material-icons {
+      font-size: 32px;
+      color: white;
+    }
+
+    .patient-name {
+      display: block;
+      font-size: 1.5em;
+      margin-block-start: 0.83em;
+      margin-block-end: 0.83em;
+      margin-inline-start: 0px;
+      margin-inline-end: 0px;
+      font-weight: bold;
+      unicode-bidi: isolate;
+    }
+
+    .patient-id {
+      color: var(--text-light);
+      font-size: 0.9rem;
     }
 
     .model-hide {
@@ -253,14 +288,6 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-    }
-
-    .modal-header h2 {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-sm);
-      margin: 0;
-      font-size: 1.5rem;
     }
 
     .modal-body {
@@ -304,13 +331,14 @@
         const data = await response.json();
 
         if (response.ok) {
-          // Update modal with prediction
-          // const patientID = document.getElementById("patientID");
+          const patientName = document.getElementById("patient-name");
+          const patientIdSpan = document.getElementById('patient-id');
           const riskValue = document.getElementById("riskValue");
           const riskFill = document.getElementById("riskFill");
           const riskMessage = document.getElementById("riskMessage");
 
-          // patientID.textContent = `${data.patient_id}`;
+          patientName.textContent = `${data.name}`;
+          patientIdSpan.textContent = `ID: ${data.patient_id}`;
           riskValue.textContent = `${data.risk.toFixed(2)}%`;
           riskFill.style.width = `${data.risk}%`;
 
@@ -337,7 +365,7 @@
         }
       } catch (error) {
         console.error("Error:", error);
-        showToast("Error processing request", "danger");
+        showToast("Error processing request", "danger", error.message);
       }
     }
 

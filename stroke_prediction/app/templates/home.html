@@ -11,10 +11,10 @@
   </div>
 
   <form
-    action="{{ url_for('patient.search_patient') }}"
     method="get"
     id="main-search-form"
     class="search-form"
+    action="{{ url_for('patient.search_patient') }}"
   >
     <div class="search-input-container">
       <input
@@ -57,5 +57,5 @@
   {% block search_result %}{% endblock %}
 </div>
 {% endblock %} {% block extra_js %}
-<script src="{{ url_for('static', filename='js/home.js') }}" defer></script>
+<!-- script src="{{ url_for('static', filename='js/home.js') }}" defer></script-->
 {% endblock %}

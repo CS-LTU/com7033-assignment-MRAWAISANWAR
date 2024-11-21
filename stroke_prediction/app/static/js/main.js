@@ -1,8 +1,9 @@
 // Constants
 const SELECTORS = {
-    mainSearchForm: '#search-form',
-    mainSearch: '.search-container',
+    mainSearchForm: '#main-search-form',
+    mainSearch: '#main-search',
     navSearch: '#nav-search',
+    navSearchForm: '#nav-search-form',
     patientDetails: '#patient-details',
     flashMessages: '#flash-messages',
 };
@@ -20,18 +21,35 @@ const TOAST_TYPES = {
  */
 class SearchManager {
     constructor() {
+        this.PREFIX = "SW";
+        this.MAX_DIGITS = 9;
+
         this.mainSearchForm = document.querySelector(SELECTORS.mainSearchForm);
         this.mainSearch = document.querySelector(SELECTORS.mainSearch);
         this.navSearch = document.querySelector(SELECTORS.navSearch);
+        this.navSearchForm = document.querySelector(SELECTORS.navSearchForm);
         this.patientDetails = document.querySelector(SELECTORS.patientDetails);
         this.isSearchInNav = false;
 
+        this.handleSearch = this.handleSearch.bind(this);
         this.initialize();
     }
 
     initialize() {
+        // Setup both search inputs
+        ['#main-patient-id', '#nav-patient-id'].forEach(selector => {
+            const input = document.querySelector(selector);
+            if (input) this.setupSearchInput(input);
+        });
+
+        // Setup main search form
         if (this.mainSearchForm) {
-            this.mainSearchForm.addEventListener('submit', this.handleSearch.bind(this));
+            this.mainSearchForm.addEventListener('submit', this.handleSearch);
+        }
+
+        // Setup nav search form
+        if (this.navSearchForm) {
+            this.navSearchForm.addEventListener('submit', this.handleSearch);
         }
 
         // Initialize search position based on patient details
@@ -41,19 +59,96 @@ class SearchManager {
 
         // Handle browser back button
         window.addEventListener('popstate', () => {
+            console.log('Back button clicked');
             if (!this.patientDetails?.children.length) {
                 this.moveSearchToCenter();
             }
         });
     }
 
+    setupSearchInput(input) {
+        if (!input) return;
+
+        // Set initial value with prefix
+        input.value = this.PREFIX;
+
+        // Handle input changes
+        input.addEventListener('input', (e) => {
+            let value = e.target.value;
+
+            // Always ensure prefix is present
+            if (!value.startsWith(this.PREFIX)) {
+                value = this.PREFIX;
+            }
+
+            // Remove any non-numeric characters after prefix
+            const numericPart = value.substring(this.PREFIX.length).replace(/[^\d]/g, '');
+
+            // Limit to MAX_DIGITS after prefix
+            const limitedNumericPart = numericPart.substring(0, this.MAX_DIGITS);
+
+            // Set the final value
+            e.target.value = this.PREFIX + limitedNumericPart;
+        });
+
+        // Prevent deletion of prefix
+        input.addEventListener('keydown', (e) => {
+            const cursorPosition = e.target.selectionStart;
+
+            // Prevent backspace/delete if it would affect the prefix
+            if ((e.key === 'Backspace' && cursorPosition <= this.PREFIX.length) ||
+                (e.key === 'Delete' && cursorPosition < this.PREFIX.length)) {
+                e.preventDefault();
+            }
+
+            // Prevent cursor placement before prefix
+            if (e.key === 'ArrowLeft' && cursorPosition <= this.PREFIX.length) {
+                e.preventDefault();
+            }
+
+            // Prevent cutting/copying prefix
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'x' || e.key === 'a')) {
+                e.preventDefault();
+            }
+        });
+
+        // Prevent paste unless it's only numbers
+        input.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const numericPart = pastedText.replace(/[^\d]/g, '');
+            const currentNumericPart = input.value.substring(this.PREFIX.length);
+            const newNumericPart = (currentNumericPart + numericPart).substring(0, this.MAX_DIGITS);
+            input.value = this.PREFIX + newNumericPart;
+        });
+
+        // Prevent drag and drop
+        input.addEventListener('drop', (e) => {
+            e.preventDefault();
+        });
+    }
+
     async handleSearch(e) {
         e.preventDefault();
+        console.log('Search initiated');
+
         const form = e.target;
-        const patientId = form.querySelector('#patient_id').value;
+        const input = form.querySelector('input[name="patient_id"]');
+        const numericValue = input.value.substring(this.PREFIX.length);
+
+        console.log('Input value:', input.value);
+        console.log('Numeric value:', numericValue);
+
+        // Only submit if we have exactly MAX_DIGITS numbers
+        if (numericValue.length !== this.MAX_DIGITS) {
+            showToast(`Please enter exactly ${this.MAX_DIGITS} digits after ${this.PREFIX}`, 'warning');
+            return;
+        }
+
+        const searchUrl = '/patient/search';
 
         try {
-            const response = await fetchWithCSRF(`${form.action}?patient_id=${patientId}`, {
+            const response = await fetchWithCSRF(`${searchUrl}?patient_id=${numericValue}`, {
                 method: 'GET',
                 headers: { 'Accept': 'text/html' }
             });
@@ -63,7 +158,7 @@ class SearchManager {
                 if (this.patientDetails) {
                     this.patientDetails.innerHTML = html;
                     this.moveSearchToNav();
-                    history.pushState({}, '', `${form.action}?patient_id=${patientId}`);
+                    history.pushState({}, '', `${searchUrl}?patient_id=${numericValue}`);
                 }
             } else {
                 showToast('Patient not found', 'warning');
@@ -75,6 +170,7 @@ class SearchManager {
     }
 
     moveSearchToNav() {
+
         if (!this.isSearchInNav && this.mainSearch && this.navSearch) {
             // Hide main search container with transition
             this.mainSearch.style.opacity = '0';
@@ -83,32 +179,15 @@ class SearchManager {
             setTimeout(() => {
                 // Completely hide the main search
                 this.mainSearch.style.display = 'none';
-
-                // If nav search doesn't have the form yet, copy it
-                if (!this.navSearch.querySelector('.search-input-container')) {
-                    // Get only the search input container from main search
-                    const searchContent = this.mainSearch.querySelector('.search-input-container').cloneNode(true);
-
-                    // Create a new form with proper structure
-                    const navSearchForm = document.createElement('form');
-                    navSearchForm.action = this.mainSearchForm.action;
-                    navSearchForm.method = 'get';
-                    navSearchForm.id = 'nav-search-form';
-                    navSearchForm.className = 'search-form';
-
-                    // Add the search content to the form
-                    navSearchForm.appendChild(searchContent);
-
-                    // Clear and add to nav search
-                    this.navSearch.innerHTML = '';
-                    this.navSearch.appendChild(navSearchForm);
-
-                    // Add event listener to new form
-                    navSearchForm.addEventListener('submit', this.handleSearch.bind(this));
-                }
-
                 // Show nav search with transition
                 this.navSearch.classList.add('active');
+
+                // Ensure nav search input has the same value
+                const mainInput = document.querySelector('#main-patient-id');
+                const navInput = document.querySelector('#nav-patient-id');
+                if (mainInput && navInput) {
+                    navInput.value = mainInput.value;
+                }
             }, 300);
 
             this.isSearchInNav = true;
@@ -119,11 +198,6 @@ class SearchManager {
         if (this.isSearchInNav && this.mainSearch && this.navSearch) {
             // Hide nav search
             this.navSearch.classList.remove('active');
-
-            // Clear nav search content after transition
-            setTimeout(() => {
-                this.navSearch.innerHTML = '';
-            }, 300);
 
             // Show main search with transition
             this.mainSearch.style.display = 'flex';
@@ -146,33 +220,6 @@ class FormManager {
         return metaTag ? metaTag.getAttribute('content') : null;
     }
 
-    static async handleSubmit(e) {
-        e.preventDefault();
-        const form = e.target;
-        const formData = new FormData(form);
-
-        try {
-            const response = await fetchWithCSRF(form.action, {
-                method: form.method,
-                body: formData
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                showToast(data.message || 'Operation successful', 'success');
-                if (data.redirect) {
-                    window.location.href = data.redirect;
-                }
-            } else {
-                showToast(data.message || 'Operation failed', 'danger');
-            }
-        } catch (error) {
-            console.error('Form submission error:', error);
-            showToast('An error occurred', 'danger');
-        }
-    }
-
     static initialize() {
         // Add CSRF protection to forms
         document.querySelectorAll('form:not([data-no-csrf])').forEach(form => {
@@ -187,11 +234,6 @@ class FormManager {
                 }
             }
         });
-
-        // Add submit handlers to ajax forms
-        document.querySelectorAll('form[data-ajax="true"]').forEach(form => {
-            form.addEventListener('submit', this.handleSubmit);
-        });
     }
 }
 
@@ -204,7 +246,9 @@ function showToast(message, type = 'info') {
         duration: 3000,
         gravity: "bottom",
         position: "right",
-        backgroundColor: TOAST_TYPES[type],
+        style: {
+            background: TOAST_TYPES[type]
+        },
         stopOnFocus: true,
         className: "custom-toast",
         offset: {
@@ -228,14 +272,13 @@ function fetchWithCSRF(url, options = {}) {
     return fetch(url, { ...defaultOptions, ...options });
 }
 
-/**
- * Initialize everything when DOM is loaded
- */
+// Initialize everything when DOM is loaded
+let searchManager;
 document.addEventListener('DOMContentLoaded', function () {
-    // Initialize search functionality
-    new SearchManager();
+    searchManager = new SearchManager();
+    window.searchManager = searchManager;
 
-    // Initialize form protection and handlers
+    // Initialize form protection
     FormManager.initialize();
 
     // Initialize flash messages
@@ -248,7 +291,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         } catch (e) {
             console.error('Error parsing flash messages:', e);
-            console.log(flashContainer.dataset.messages);
         }
     }
 });
