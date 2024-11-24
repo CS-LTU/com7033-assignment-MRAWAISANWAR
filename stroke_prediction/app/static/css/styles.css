@@ -637,14 +637,11 @@ brand-link {
   max-width: 600px;
   margin: 0 auto;
   padding: var(--spacing-xl);
-  transition: all 0.3s ease;
   opacity: 1;
-  transform: translateY(0);
 }
 
 .search-container.hidden {
   opacity: 0;
-  transform: translateY(-20px);
   pointer-events: none;
   visibility: hidden;
 }
@@ -720,21 +717,20 @@ brand-link {
   flex-shrink: 0;
 }
 
-/* Navbar Search */
+/* Navbar search transitions */
 .navbar-search {
   flex: 1;
   max-width: 500px;
   margin: 0 var(--spacing-xl);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
+  display: none;
 }
 
 .navbar-search.active {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
+  display: block;
 }
 
 /* Hide logo in navbar search */
@@ -793,6 +789,7 @@ brand-link {
     margin-top: var(--spacing-sm);
   }
 }
+
 /* Welcome Container */
 .welcome-container {
   text-align: center;

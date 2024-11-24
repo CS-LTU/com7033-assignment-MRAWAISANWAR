@@ -11,12 +11,6 @@ class User(db.Model, UserMixin):
     role = db.Column(db.String(50), nullable=False, default="doctor")
     
     def set_password(self, password):
-        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
-
-    def check_password(self, password):
-        return bcrypt.check_password_hash(self.password, password)
-    
-    def set_password(self, password):
         """Hashes password and stores it in password_hash."""
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
 
