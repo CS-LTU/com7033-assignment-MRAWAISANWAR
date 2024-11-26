@@ -167,3 +167,37 @@ def search_patient():
             # return redirect(url_for('home'))
             
     return redirect(url_for('home'))
+
+@patient_bp.route('/delete/<patient_id>', methods=['POST'])
+@login_required
+def delete_patient(patient_id):
+    try:
+        # Check if user is admin
+        if current_user.role != 'admin':
+            return jsonify({
+                'success': False,
+                'message': 'Unauthorized: Only admins can delete records'
+            }), 403
+
+        # Find and delete the patient
+        patient = Patient.objects(patient_id=patient_id).first()
+        if not patient:
+            return jsonify({
+                'success': False,
+                'message': 'Patient not found'
+            }), 404
+
+        patient.delete()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Patient record deleted successfully',
+            'redirect': url_for('home')
+        }), 200
+
+    except Exception as e:
+        print(f"Error deleting patient: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': f'Error deleting patient: {str(e)}'
+        }), 500

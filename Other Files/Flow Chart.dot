@@ -1,0 +1,280 @@
+digraph medical_workflow {
+    // Graph settings
+    bgcolor="#1F1F1F"
+    fontname="Inter"
+    fontcolor="#CCCCCC"
+    splines="ortho"
+    pad=0.5
+    nodesep=0.8
+    ranksep=1.2
+    compound=true
+    
+    // Default styles
+    node [
+        style="filled,rounded",
+        shape=box,
+        fontname="Inter",
+        fontsize=11,
+        fontcolor="#FFFFFF",
+        color="#2D2D2D",
+        fillcolor="#2D2D2D",
+        margin=0.3,
+        height=0.5,
+        penwidth=1.5
+    ]
+    
+    edge [
+        color="#565656",
+        fontcolor="#CCCCCC",
+        fontname="Inter",
+        fontsize=10,
+        penwidth=1.2,
+        arrowsize=0.8
+    ]
+
+    // Entry Point
+    subgraph cluster_entry {
+        label="Entry Point"
+        style="filled,rounded"
+        color="#1E1E1E"
+        fillcolor="#1E1E1E"
+        fontcolor="#569CD6"
+        
+        start [
+            label="Start",
+            shape=oval,
+            fillcolor="#264F78"
+        ]
+        
+        has_account [
+            label="Have Account?",
+            shape=diamond,
+            fillcolor="#3E3E42"
+        ]
+    }
+
+    // Authentication Cluster
+    subgraph cluster_auth {
+        label="Authentication"
+        style="filled,rounded"
+        color="#1E1E1E"
+        fillcolor="#1E1E1E"
+        fontcolor="#569CD6"
+        
+        login [
+            label="Login\n(Email/Password)",
+            tooltip="Enter credentials",
+            fillcolor="#264F78"
+        ]
+        
+        register [
+            label="Register New User",
+            tooltip="Create new account",
+            fillcolor="#264F78"
+        ]
+        
+        validate_email [
+            label="Verify Email",
+            fillcolor="#264F78"
+        ]
+        
+        check_existing [
+            label="Check Existing User",
+            shape=diamond,
+            fillcolor="#3E3E42"
+        ]
+        
+        validate_credentials [
+            label="Validate Credentials",
+            shape=diamond,
+            fillcolor="#3E3E42"
+        ]
+        
+        role_selection [
+            label="Role Selection\n(Admin/Doctor/Nurse)",
+            fillcolor="#264F78"
+        ]
+    }
+
+    // User Management
+    subgraph cluster_user_management {
+        label="User Profile Management"
+        style="filled,rounded"
+        color="#1E1E1E"
+        fillcolor="#1E1E1E"
+        fontcolor="#569CD6"
+        
+        profile_settings [
+            label="Profile Settings",
+            fillcolor="#264F78"
+        ]
+        
+        update_name [
+            label="Update Name",
+            fillcolor="#264F78"
+        ]
+        
+        change_password [
+            label="Change Password",
+            fillcolor="#264F78"
+        ]
+        
+        validate_changes [
+            label="Validate Changes",
+            shape=diamond,
+            fillcolor="#3E3E42"
+        ]
+    }
+
+    // Patient Management
+    subgraph cluster_patient_management {
+        label="Patient Management"
+        style="filled,rounded"
+        color="#1E1E1E"
+        fillcolor="#1E1E1E"
+        fontcolor="#569CD6"
+        
+        search_patient [
+            label="Search Patient",
+            fillcolor="#264F78"
+        ]
+        
+        patient_found [
+            label="Patient Found?",
+            shape=diamond,
+            fillcolor="#3E3E42"
+        ]
+        
+        show_details [
+            label="Show Patient Details",
+            fillcolor="#264F78"
+        ]
+        
+        add_patient [
+            label="Add New Patient",
+            fillcolor="#264F78"
+        ]
+        
+        enter_patient_data [
+            label="Enter Patient Data",
+            fillcolor="#264F78"
+        ]
+        
+        validate_patient_data [
+            label="Validate Patient Data",
+            shape=diamond,
+            fillcolor="#3E3E42"
+        ]
+        
+        delete_patient [
+            label="Delete Patient\n(Admin Only)",
+            fillcolor="#264F78"
+        ]
+    }
+
+    // Risk Assessment
+    subgraph cluster_risk_assessment {
+        label="Risk Assessment"
+        style="filled,rounded"
+        color="#1E1E1E"
+        fillcolor="#1E1E1E"
+        fontcolor="#569CD6"
+        
+        preprocess_data [
+            label="Preprocess Data",
+            fillcolor="#264F78"
+        ]
+        
+        load_model [
+            label="Load ML Model",
+            fillcolor="#264F78"
+        ]
+        
+        predict_risk [
+            label="Predict Risk",
+            fillcolor="#264F78"
+        ]
+        
+        risk_categories [
+            label="Categorize Risk\n(Low/Medium/High)",
+            fillcolor="#264F78"
+        ]
+        
+        generate_report [
+            label="Generate Report",
+            fillcolor="#264F78"
+        ]
+    }
+
+    // Database Operations
+    subgraph cluster_database {
+        label="Database Operations"
+        style="filled,rounded"
+        color="#1E1E1E"
+        fillcolor="#1E1E1E"
+        fontcolor="#569CD6"
+        
+        sqlite_auth [
+            label="SQLite\n(Authentication/Users)",
+            fillcolor="#264F78"
+        ]
+        
+        mongodb_patients [
+            label="MongoDB\n(Patient Records)",
+            fillcolor="#264F78"
+        ]
+    }
+
+    // Main Flow Connections
+    start -> has_account
+    has_account -> login [label="Yes"]
+    has_account -> register [label="No"]
+    
+    // Registration Flow
+    register -> check_existing
+    check_existing -> validate_email [label="No"]
+    check_existing -> register [label="Yes", color="#FF3333"]
+    validate_email -> role_selection
+    role_selection -> sqlite_auth [label="Save User"]
+    
+    // Login Flow
+    login -> validate_credentials
+    validate_credentials -> role_selection [label="Valid"]
+    validate_credentials -> login [label="Invalid", color="#FF3333"]
+    
+    // User Management
+    role_selection -> profile_settings
+    profile_settings -> update_name
+    profile_settings -> change_password
+    update_name -> validate_changes
+    change_password -> validate_changes
+    validate_changes -> sqlite_auth [label="Update"]
+    
+    // Role-based Access
+    role_selection -> search_patient [label="All Roles"]
+    role_selection -> add_patient [label="Admin/Doctor"]
+    
+    // Patient Management
+    search_patient -> patient_found
+    patient_found -> mongodb_patients [label="Query"]
+    patient_found -> show_details [label="Yes"]
+    patient_found -> search_patient [label="No", color="#FF3333"]
+    show_details -> delete_patient [label="Admin Only"]
+    
+    // Patient Addition Flow
+    add_patient -> enter_patient_data
+    enter_patient_data -> validate_patient_data
+    validate_patient_data -> preprocess_data [label="Valid"]
+    validate_patient_data -> enter_patient_data [label="Invalid", color="#FF3333"]
+    
+    // Risk Assessment Flow
+    preprocess_data -> load_model
+    load_model -> predict_risk
+    predict_risk -> risk_categories
+    risk_categories -> generate_report
+    generate_report -> mongodb_patients [label="Save", color="#33FF33"]
+    
+    // Database Operations
+    delete_patient -> mongodb_patients [label="Delete"]
+    sqlite_auth -> search_patient [label="Auth OK", color="#33FF33"]
+}

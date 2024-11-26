@@ -1,20 +1,10 @@
 from datetime import datetime
 import random
-from stroke_prediction.app.models.patient import Patient
+from app.models.patient import Patient
 
 class IDGenerator:
     @staticmethod
     def generate_patient_id():
-        """
-        Generates a valid 8-digit patient ID based on the current date and time,
-        combined with a random sequence. Retries up to 5 times if validation fails.
-
-        Returns:
-            str: A valid 8-digit patient ID.
-
-        Raises:
-            ValueError: If a valid patient ID cannot be generated after 5 attempts.
-        """
 
         max_attempts = 5
         
@@ -45,15 +35,6 @@ class IDGenerator:
 
 
     def check_patient_id(patient_id):
-        """
-        Checks if a patient with the given patient_id exists in the database.
-
-        Args:
-            patient_id (str): The patient ID to check.
-
-        Returns:
-            bool: True if a patient with the given patient_id exists, False otherwise.
-        """
 
         # Try to fetch the patient with the given patient_id
         patient = Patient.objects(patient_id=patient_id).first()
@@ -67,24 +48,30 @@ class IDGenerator:
 
     @staticmethod
     def validate_patient_id(patient_id):
-        """
-        Validates the format and structure of a patient ID.
-        Ensures it is 8 digits and has a valid date component.
-
-        Args:
-            patient_id (str): The patient ID to validate.
-
-        Returns:
-            bool: True if the patient ID is valid, False otherwise.
-        """
-
         if not patient_id or not isinstance(patient_id, str):
             return False
         
         if len(patient_id) != 9 or not patient_id.isdigit():
             return False
         
-        if IDGenerator.check_patient_id(str(patient_id)):
-            return True
+        # Extract and validate date portion
+        try:
+            year_digit = patient_id[0]
+            month = int(patient_id[1:3])
+            day = int(patient_id[3:5])
+            
+            # Validate month
+            if month < 1 or month > 12:
+                return False
+                
+            # Validate day (simplified - you might want to add specific month length checks)
+            if day < 1 or day > 31:
+                return False
+                
+            # Check if ID exists in database
+            if IDGenerator.check_patient_id(str(patient_id)):
+                return True
+        except ValueError:
+            return False
 
         return False

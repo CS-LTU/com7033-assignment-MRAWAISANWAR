@@ -10,6 +10,20 @@
       <h2>{{ patient.name }}</h2>
       <span class="patient-id">ID: {{ patient.patient_id }}</span>
     </div>
+
+    {% if current_user.role == 'admin' %}
+    <div>
+      <button
+        id="delete-record"
+        class="btn btn-primary Btn-Delete-Record"
+        data-patient-id="{{ patient.patient_id }}"
+        onclick="deletePatient('{{ patient.patient_id }}')"
+      >
+        <span class="material-icons">delete</span>
+        Delete
+      </button>
+    </div>
+    {% endif %}
   </div>
 
   <div class="details-grid">
@@ -126,4 +140,41 @@
     </div>
   </div>
 </div>
+
+<script>
+  function deletePatient(patientId) {
+    if (
+      confirm(
+        "Patient ID: SW" +
+          patientId +
+          "\nAre you sure you want to delete this patient record?"
+      )
+    ) {
+      fetch(`/patient/delete/${patientId}`, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": document.querySelector('meta[name="csrf-token"]')
+            .content,
+          "Content-Type": "application/json",
+        },
+        credentials: "same-origin",
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            showToast("Patient record deleted successfully", "success");
+            // Redirect to home page
+            window.location.href = data.redirect;
+          } else {
+            showToast(data.message || "Error deleting record", "danger");
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          showToast("Error deleting patient record", "danger");
+        });
+    }
+  }
+</script>
+
 {% endblock %}

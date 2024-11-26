@@ -613,6 +613,77 @@ brand-link {
   justify-content: space-between;
 }
 
+/*Delete button in Patient_Details*/
+.Btn-Delete-Record {
+  /* Base styles */
+  background-color: #dc2626 !important; /* Red background */
+  color: white !important;
+  border: 1px solid #dc2626 !important;
+  margin-left: 920% !important; /* Aligns to right */
+  margin-right: 0 !important;
+  transition: all 0.2s ease-in-out !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-weight: 500 !important;
+
+  /* Hover effect */
+  &:hover {
+    background-color: #b91c1c !important; /* Darker red */
+    border-color: #b91c1c !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 6px -1px rgb(220 38 38 / 0.2) !important;
+  }
+
+  /* Active/Click effect */
+  &:active {
+    transform: translateY(1px) !important;
+    box-shadow: none !important;
+  }
+
+  /* Focus state */
+  &:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3) !important;
+  }
+
+  /* Icon styling */
+  .material-icons {
+    font-size: 18px !important;
+    margin-right: 4px !important;
+  }
+}
+
+/* Add a warning animation on hover */
+@keyframes warningPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.Btn-Delete-Record:hover {
+  animation: warningPulse 1s infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .details-footer {
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  .Btn-Delete-Record {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
 /* Access Denied Styles */
 .access-denied {
   text-align: center;
