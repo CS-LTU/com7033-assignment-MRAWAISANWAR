@@ -1,4 +1,4 @@
-// main.js (new)
+// main.js
 
 // Constants
 const SELECTORS = {
@@ -261,7 +261,7 @@ class SearchManager {
             console.log('SearchManager: Showing main search');
             // Show main search
             this.mainSearch.classList.remove('hidden');
-            this.mainSearch.style.display = 'flex';  // Note: Using flex as per your CSS
+            this.mainSearch.style.display = 'flex';
             this.mainSearch.style.visibility = 'visible';
             this.mainSearch.style.opacity = '1';
 
