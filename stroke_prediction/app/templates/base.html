@@ -31,6 +31,38 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/styles.css') }}"
     />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/auth_pages.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/navbar.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/home.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/settings.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/patient_form.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/patient_details.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/patient_list.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/search_components.css') }}"
+    />
 
     <!-- Additional CSS block for child templates -->
     {% block extra_css %}{% endblock %}
@@ -38,6 +70,14 @@
     <!-- JavaScript Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js" defer></script>
     <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+    <script
+      src="{{ url_for('static', filename='js/utils.js') }}"
+      defer
+    ></script>
+    <script
+      src="{{ url_for('static', filename='js/render_patients_list.js') }}"
+      defer
+    ></script>
 
     <!-- Additional JavaScript block for child templates -->
     {% block extra_head_js %}{% endblock %}

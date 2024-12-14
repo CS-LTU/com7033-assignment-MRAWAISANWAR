@@ -147,6 +147,10 @@ def predict_risk():
             'success': False,
             'message': f'An unexpected error occurred: {str(e)}'
         }), 500
+    
+
+    # show list of patients
+    
 
 @patient_bp.route('/search', methods=['GET'])
 @login_required
@@ -160,7 +164,7 @@ def search_patient():
         patient = Patient.objects(patient_id=patient_id).first()
         
         if patient:
-            return render_template('patient_details.html', patient=patient)
+            return render_template('patient/patient_details.html', patient=patient)
         else:
             flash('Patient not found', 'warning')
             return jsonify({'success': False, 'message': 'Patient not found'}), 404
@@ -201,3 +205,45 @@ def delete_patient(patient_id):
             'success': False,
             'message': f'Error deleting patient: {str(e)}'
         }), 500
+    
+
+@patient_bp.route('/list', methods=['GET'])
+@login_required
+#@role_required('admin')
+def list_patients():
+    try:
+        page = int(request.args.get('page', 1))
+        per_page = 10
+        skip = (page - 1) * per_page
+
+        # Get patients sorted by date, newest first
+        patients = Patient.objects().order_by('-record_entry_date').skip(skip).limit(per_page)
+
+        return jsonify({
+            'success': True,
+            'patients': [{
+                'patient_id': p.patient_id,
+                'name': p.name,
+                'age': p.age,
+                'gender': p.gender,
+                'stroke_risk': p.stroke_risk,
+                'record_entry_date': p.record_entry_date.isoformat()
+            } for p in patients]
+        }), 200
+
+    except Exception as e:
+        print(f"Error fetching patients: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': 'Error fetching patient list'
+        }), 500
+    
+@patient_bp.route('/count', methods=['GET'])
+@login_required
+def patients_count():
+    try:
+        count = Patient.objects.count()
+        return jsonify({'count': count})
+    except Exception as error:
+        print('Error counting patients:', str(error))
+        return jsonify({'error': 'Failed to count patients'}), 500

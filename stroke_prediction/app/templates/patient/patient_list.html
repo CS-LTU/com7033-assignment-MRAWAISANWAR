@@ -1,0 +1,57 @@
+<div class="patient-list-wrapper">
+  <div class="patient-header">
+    <span id="count-badge-left-border"></span>
+    <div class="patient-count-badge">
+      Total:
+      <span id="total-patients" class="count-number"><!--Filled by js --></span>
+    </div>
+    <span id="count-badge-right-border"></span>
+  </div>
+
+  <template id="patient-row-template">
+    <tr id="list-rows">
+      <td data-field="patient_id"></td>
+      <td data-field="name"></td>
+      <td data-field="age"></td>
+      <td data-field="gender"></td>
+      <td data-field="risk">
+        <span class="risk-badge"></span>
+      </td>
+      <td data-field="date"></td>
+      <td class="actions">
+        <button class="icon-btn edit-btn">
+          <span style="display: none" class="material-icons">edit</span>
+        </button>
+        <button class="icon-btn delete-btn">
+          <span class="material-icons">delete</span>
+        </button>
+        <button class="icon-btn show-details-btn">
+          <span class="material-icons">keyboard_arrow_right</span>
+        </button>
+      </td>
+    </tr>
+  </template>
+
+  <table class="patient-list-table">
+    <thead>
+      <tr>
+        <th>Patient ID</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Gender</th>
+        <th>Risk Level</th>
+        <th>Added On</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="patient-list-body"></tbody>
+  </table>
+
+  <div class="windows-loader hidden">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+</div>

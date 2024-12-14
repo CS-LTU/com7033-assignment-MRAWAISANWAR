@@ -34,10 +34,27 @@
         <span class="material-icons">add</span>
         Add Patient
       </a>
-      {% endif %}
+      {% if current_user.role in ['admin'] %}
+      <a
+        class="btn btn-primary patient-list-toggle"
+        onclick="togglePatientList(this)"
+      >
+        <span class="material-icons">format_list_bulleted</span>
+      </a>
+      {% endif %} {% endif %}
     </div>
   </form>
 </div>
+
+<!-- Show Patient List -->
+<div class="patient-list-section">
+  <div class="Patient-List-Container hidden">
+    <!-- Include patient_list template -->
+    {% include 'patient/patient_list.html' %}
+  </div>
+</div>
+
+<!-- If User is not Logged-in -->
 {% else %}
 <div class="welcome-container fade-in">
   <div class="welcome-logo">
